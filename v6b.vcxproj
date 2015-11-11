@@ -141,6 +141,7 @@
     <ClCompile Include="nwpwin.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="main.h" />
     <ClInclude Include="nwpdlg.h" />
     <ClInclude Include="nwpwin.h" />
     <ClInclude Include="rc.h" />
