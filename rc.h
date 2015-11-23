@@ -6,6 +6,5 @@
 #define IDD_NUMBER		105
 #define IDC_EDIT1		106
 
-#define IDS_DJELITELJ 1.5
 
 

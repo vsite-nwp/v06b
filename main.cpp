@@ -1,11 +1,12 @@
 #include "main.h"
 #include "rc.h"
-
+const float djelitelj = 1.5;
 
 int NumberDialog::IDD(){
 	return IDD_NUMBER; 
 }
 bool NumberDialog::OnInitDialog(){
+	SetInt(IDC_EDIT1, (broj - 1));
 	return true;
 }
 bool NumberDialog::OnOK(){
@@ -25,17 +26,14 @@ void MainWindow::OnPaint(HDC hdc)
 {
 	RECT rect;
 	GetClientRect(*this, &rect);
-	if (hFont)
-	{
-		HGDIOBJ holdfont = SelectObject(hdc, hFont);
-	}
+	HFONT hFont = CreateFontIndirect(&lf);
+	HGDIOBJ holdfont = SelectObject(hdc, hFont);
 
 	int sirina = (rect.right / broj);
 	int visina = (rect.bottom / broj);
 
 	int tempSir;
 	int tempVis;
-	float djelitelj = IDS_DJELITELJ;
 
 	#pragma region Top Header Linije
 
@@ -102,11 +100,11 @@ void MainWindow::OnPaint(HDC hdc)
 
 	#pragma endregion 
 	
-	
+	DeleteObject(holdfont);	
 }
 
 void MainWindow::OnCommand(int id){		
-	
+	NumberDialog ndl;	
 	switch(id){
 		case ID_FONT: 
 			lf = { 0 };
@@ -117,10 +115,11 @@ void MainWindow::OnCommand(int id){
 			cf.Flags = CF_INITTOLOGFONTSTRUCT
 				| CF_SCREENFONTS | CF_EFFECTS;
 			cf.lpLogFont = &lf;
-			if (ChooseFont(&cf)) hFont = CreateFontIndirect(&lf);
+			if (ChooseFont(&cf)) CreateFontIndirect(&lf);
 			InvalidateRect(*this, NULL, TRUE);			
 			break;
 		case ID_NUMBER: 
+			ndl.broj = broj;
 			if (ndl.DoModal(NULL, *this) == IDOK)
 			{				
 				broj = ndl.broj;
@@ -141,8 +140,8 @@ void MainWindow::OnDestroy(){
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
 	Application app;
-	MainWindow wnd;		
-
+	MainWindow wnd;
+	
 	wnd.Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, "NWP", 
 		(int)LoadMenu(hInstance, MAKEINTRESOURCE(IDM_MAIN)));	
 
