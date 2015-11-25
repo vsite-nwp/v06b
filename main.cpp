@@ -1,6 +1,7 @@
 #include "main.h"
 #include "rc.h"
 const float djelitelj = 1.5;
+const int default_broj = 11;
 
 int NumberDialog::IDD(){
 	return IDD_NUMBER; 
@@ -140,9 +141,9 @@ void MainWindow::OnDestroy(){
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
 	Application app;
-	MainWindow wnd;
+	MainWindow* wnd = new  MainWindow(default_broj);
 	
-	wnd.Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, "NWP", 
+	wnd->Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, "NWP", 
 		(int)LoadMenu(hInstance, MAKEINTRESOURCE(IDM_MAIN)));	
 
 	return app.Run();
