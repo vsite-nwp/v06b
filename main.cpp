@@ -108,8 +108,6 @@ void MainWindow::OnCommand(int id){
 	NumberDialog ndl;	
 	switch(id){
 		case ID_FONT: 
-			lf = { 0 };
-			strcpy(lf.lfFaceName, "Arial");
 			CHOOSEFONT cf;
 			ZeroMemory(&cf, sizeof cf);
 			cf.lStructSize = sizeof cf;
@@ -137,11 +135,17 @@ void MainWindow::OnDestroy(){
 	::PostQuitMessage(0);
 }
 
+MainWindow::MainWindow(){
+	broj = default_broj;
+	lf = { 0 };
+	strcpy(lf.lfFaceName, "Arial");
+};
+
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
 	Application app;
-	MainWindow* wnd = new  MainWindow(default_broj);
+	MainWindow* wnd = new MainWindow();
 	
 	wnd->Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, "NWP", 
 		(int)LoadMenu(hInstance, MAKEINTRESOURCE(IDM_MAIN)));	

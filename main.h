@@ -15,11 +15,7 @@ class MainWindow : public Window {
 public:
 	int broj;	
 	LOGFONT lf;
-	MainWindow(int broj) : broj(broj)
-	{
-		lf = { 0 };
-		strcpy(lf.lfFaceName, "Arial");
-	};
+	MainWindow();
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);
