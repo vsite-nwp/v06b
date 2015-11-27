@@ -138,7 +138,10 @@ void MainWindow::OnDestroy(){
 MainWindow::MainWindow(){
 	broj = default_broj;
 	lf = { 0 };
+	HDC hDC = ::GetDC(0);
+	lf.lfHeight = -10 * GetDeviceCaps(hDC, LOGPIXELSY) / 72;	
 	strcpy(lf.lfFaceName, "Arial");
+	::ReleaseDC(0, hDC);
 };
 
 
