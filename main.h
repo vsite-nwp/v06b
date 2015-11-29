@@ -2,6 +2,8 @@
 #include "nwpdlg.h"
 
 class NumberDialog : public Dialog {
+
+
 protected:
 	int IDD();
 	bool OnInitDialog();
@@ -9,6 +11,9 @@ protected:
 };
  
 class MainWindow : public Window {
+	LOGFONT lf;
+	COLORREF col;
+
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);
