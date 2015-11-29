@@ -46,6 +46,14 @@ void MainWindow::OnCommand(int id){
 
 			break;
 		case ID_NUMBER: 
+		{
+			NumberDialog dlg;	dlg.n = maxNum;
+			if (dlg.DoModal(0, *this) == IDOK) {
+				maxNum = dlg.n;
+				InvalidateRect(*this, NULL, true);
+			}
+		}
+
 			break;
 		case ID_EXIT: 
 			DestroyWindow(*this); 
