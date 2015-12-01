@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
 	Application app;
 	MainWindow wnd;	
-	wnd.Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, "NWP", 
+	wnd.Create(NULL, WS_OVERLAPPEDWINDOW | WS_VISIBLE, _T("NWP"),
 		(int)LoadMenu(hInstance, MAKEINTRESOURCE(IDM_MAIN)));	
 	return app.Run();
 }
