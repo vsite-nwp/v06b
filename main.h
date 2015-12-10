@@ -2,7 +2,7 @@
 #include "nwpdlg.h"
 
 class NumberDialog : public Dialog {
-public:
+	public:
 	int n;
 
 protected:
@@ -24,6 +24,7 @@ public:
 		lf.lfHeight = -12 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
 		ReleaseDC(0, hdc);
 	}
+
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);
