@@ -13,9 +13,11 @@ protected:
 class MainWindow : public Window {
 	LOGFONT lf;
 	int maxNum;
+	COLORREF color;
 public:
 	MainWindow(): maxNum(5)
 	{
+		color = (RGB(0, 0, 0));
 		::ZeroMemory(&lf, sizeof(lf));
 		_tcscpy(lf.lfFaceName, _T("Arial"));
 		HDC hdc = GetDC(0);

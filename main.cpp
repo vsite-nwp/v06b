@@ -26,7 +26,7 @@ void MainWindow::OnPaint(HDC hdc){
 	int y = rc.bottom / (maxNum+1);
 	HFONT font = CreateFontIndirect(&lf);
 	HFONT oldFont =(HFONT) SelectObject(hdc, font);
-
+	SetTextColor(hdc, color);
 	MoveToEx(hdc, 0, y, NULL);
 	LineTo(hdc, rc.right, y);
 
@@ -63,7 +63,9 @@ void MainWindow::OnCommand(int id){
 				| CF_SCREENFONTS | CF_EFFECTS;
 			cf.hwndOwner = *this;
 			cf.lpLogFont = &lf;
+			cf.rgbColors = color;
 			ChooseFont(&cf);
+			color = cf.rgbColors;
 			InvalidateRect(*this, NULL, true);
 			break;
 		case ID_NUMBER: 
