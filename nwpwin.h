@@ -29,7 +29,6 @@ protected:
 	virtual tstring ClassName();
 	bool Register(const tstring& name);
 	tstring GenerateClassName();
-
 public:
 	Window();
 
