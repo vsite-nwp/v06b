@@ -25,7 +25,7 @@ void MainWindow::OnPaint(HDC hdc){
 	int x = rc.right/(maxNum+1);
 	int y = rc.bottom / (maxNum+1);
 	HFONT font = CreateFontIndirect(&lf);
-	SelectObject(hdc, font);
+	HFONT oldFont =(HFONT) SelectObject(hdc, font);
 
 	MoveToEx(hdc, 0, y, NULL);
 	LineTo(hdc, rc.right, y);
@@ -49,6 +49,7 @@ void MainWindow::OnPaint(HDC hdc){
 			DrawText(hdc, s.c_str(), -1, &kucica, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}	
 	}
+	SelectObject(hdc, oldFont);
 	DeleteObject(font);
 }
 
