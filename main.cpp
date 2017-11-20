@@ -33,20 +33,20 @@ void MainWindow::OnPaint(HDC hdc){
 	MoveToEx(hdc, x, 0, NULL);
 	LineTo(hdc, x, rc.bottom);
 
-	TCHAR s[16];
+	std::string s;
 	for (int i = 1; i <= maxNum; ++i) {
-		_stprintf(s, _T("%d"), i);
+		s = std::to_string(i);
 		RECT vodoravno = { i*x,0,(i + 1)*x,y };
 		RECT okomito = { 0,i*y,x,(i + 1)*y };
-		DrawText(hdc, s, -1, &vodoravno, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
-		DrawText(hdc, s, -1, &okomito, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		DrawText(hdc, s.c_str(), -1, &vodoravno, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		DrawText(hdc, s.c_str(), -1, &okomito, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 	}
 	
 	for (int i = 1; i <= maxNum; i++) {
 		for (int j = 1; j <= maxNum; j++) {
-			_stprintf(s, _T("%d"), i*j);
+			s = std::to_string(i*j);
 			RECT kucica = {j*x,i*y,(j+1)*x,(i+1)*y};
-			DrawText(hdc, s, -1, &kucica, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+			DrawText(hdc, s.c_str(), -1, &kucica, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}	
 	}
 	DeleteObject(font);
