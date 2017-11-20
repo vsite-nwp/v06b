@@ -31,6 +31,7 @@ protected:
 	tstring GenerateClassName();
 
 public:
+	int numNumbers;
 	Window();
 
 	bool Create(HWND parent, DWORD style, LPCTSTR caption=0, int IdOrMenu=0, 
