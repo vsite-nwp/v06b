@@ -1,55 +1,81 @@
 #include "main.h"
 #include "rc.h"
+#include <string>
 
 int NumberDialog::IDD(){
 	return IDD_NUMBER; 
 }
 bool NumberDialog::OnInitDialog(){
+	SetInt(IDC_EDIT1, edNum);
 	return true;
 }
 bool NumberDialog::OnOK(){
-	int edNum = GetInt(IDC_EDIT1);
+	edNum = GetInt(IDC_EDIT1);
 	return true;
 }
 
+MainWindow::MainWindow() :numNumbers(10) {
+	fontColor = RGB(0, 0, 0);
+	ZeroMemory(&font, sizeof font);
+	_tcscpy(font.lfFaceName, _T("Arial"));
+	HDC hdc = GetDC(0);
+	font.lfHeight = -10 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
+	ReleaseDC(0,hdc);
+}
  
 void MainWindow::OnPaint(HDC hdc){
 	RECT rct; GetClientRect(*this, &rct);
+	POINT pnt{ rct.right / (numNumbers+1), rct.bottom / (numNumbers+1) };
 
-	//setting coordinate system
-	SetMapMode(hdc, MM_ANISOTROPIC);
-	SetViewportExtEx(hdc, rct.right, rct.bottom, NULL);
-	SetWindowExtEx(hdc, numNumbers, numNumbers, NULL);
+	HFONT currFont = CreateFontIndirect(&font);
+	HFONT oldFont=(HFONT)SelectObject(hdc, currFont);
 
 	//drawing lines for table edges
-	MoveToEx(hdc, 1, 0, 0);
-	LineTo(hdc, 1, rct.bottom);
-	MoveToEx(hdc, 0, 1, 0);
-	LineTo(hdc, rct.right, 1);
+	MoveToEx(hdc, pnt.x, 0, 0);
+	LineTo(hdc, pnt.x, rct.bottom);
+	MoveToEx(hdc, 0, pnt.y, 0);
+	LineTo(hdc, rct.right, pnt.y);
+	SetTextColor(hdc, fontColor);
 	
+	//headers
+	for (int cnt = 1; cnt < numNumbers + 1; ++cnt) {
+	RECT leftHeader{ cnt*pnt.x,0,(cnt + 1)*pnt.x, pnt.y }, topHeader{ 0, cnt*pnt.y,pnt.x, (cnt + 1)*pnt.y };
+	std::string txt = std::to_string(cnt);
+	DrawText(hdc, txt.c_str(), -1, &topHeader, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	DrawText(hdc, txt.c_str(), -1, &leftHeader, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	}
+
 	//table drawing
 	//cntRow->cords for Y (Line we are positioned) ::::::::: cntClmn->cords for x (column we are positioned)
-	for (int cntRow = 0; cntRow <= numNumbers; ++cntRow) {
-		for (int cntClmn = 1; cntClmn <= numNumbers; ++cntClmn) {
-			/*HRGN rgn = CreateRectRgn(cntClmn - 1, cntRow, cntClmn, cntRow + 1);
-			SelectClipRgn(hdc, rgn);
-			TCHAR bfr;
-			RECT rgnRect; GetClientRect(*this, &rgnRect);
-			sprintf(&bfr, _T("%d"), cntClmn);
-			DrawText(hdc, &bfr, sizeof bfr, &rgnRect, DT_CENTER);*/
+	for (int cntRow = 1; cntRow <= numNumbers+1; ++cntRow) {
+		for (int cntClmn = 1; cntClmn <= numNumbers+1; ++cntClmn) {
+			RECT loopRect{cntRow*pnt.x, cntClmn*pnt.y, (cntRow+1)*pnt.x, (cntClmn+1)*pnt.y};
+			std::string mult = std::to_string(cntRow*cntClmn);
+			DrawText(hdc, mult.c_str(), -1, &loopRect, DT_CENTER|DT_SINGLELINE|DT_VCENTER);
 		}
 	}
+
+	SelectObject(hdc, oldFont);
+	DeleteObject(currFont);
 }
 
 void MainWindow::OnCommand(int id){
 	switch(id){
 		case ID_FONT:
-			CHOOSEFONT chf;
-			chf.Flags = CF_SCREENFONTS|CF_EFFECTS|CF_INITTOLOGFONTSTRUCT;
-			ChooseFont(&chf);
+			CHOOSEFONT cf;
+			ZeroMemory(&cf, sizeof cf);
+			cf.lStructSize = sizeof cf;
+			cf.Flags = CF_INITTOLOGFONTSTRUCT|CF_SCREENFONTS|CF_EFFECTS;
+			cf.hwndOwner = *this;
+			cf.lpLogFont = &font;
+			cf.rgbColors = fontColor;
+			ChooseFont(&cf);
+			fontColor = cf.rgbColors;
+			InvalidateRect(*this, 0, TRUE);
 			break;
 		case ID_NUMBER: {
 			NumberDialog numDlg;
+			numDlg.edNum = numNumbers;
 			numDlg.DoModal(NULL, *this);
 			numNumbers = numDlg.edNum;
 			InvalidateRect(*this, 0, TRUE);

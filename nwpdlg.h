@@ -8,7 +8,6 @@ class Dialog
 {
 	HWND hw;
 public:
-	int edNum;
 	static int CALLBACK Proc(HWND hw, UINT msg, WPARAM wp, LPARAM lp);
 	operator HWND() const { return hw; }
 	int DoModal(HINSTANCE, HWND parent=0);

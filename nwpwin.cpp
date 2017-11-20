@@ -38,7 +38,7 @@ tstring Window::GenerateClassName()
 	return tstring(s);
 }
 
-Window::Window() : hw(0), numNumbers(10) {}
+Window::Window() : hw(0) {}
 
 bool Window::Create(HWND parent, DWORD style, LPCTSTR caption, int IdOrMenu, 
 	int x, int y, int width, int height)
