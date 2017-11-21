@@ -2,6 +2,8 @@
 #include "nwpdlg.h"
 
 class NumberDialog : public Dialog {
+public:
+	int requestNum;
 protected:
 	int IDD();
 	bool OnInitDialog();
@@ -9,6 +11,19 @@ protected:
 };
  
 class MainWindow : public Window {
+	LOGFONT lf;
+	int maxNum;
+	COLORREF color;
+public:
+	MainWindow(): maxNum(5)
+	{
+		color = (RGB(0, 0, 0));
+		::ZeroMemory(&lf, sizeof(lf));
+		_tcscpy(lf.lfFaceName, _T("Arial"));
+		HDC hdc = GetDC(0);
+		lf.lfHeight = -18*GetDeviceCaps(hdc, LOGPIXELSY) / 72;
+		ReleaseDC(0, hdc);
+	}
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);
