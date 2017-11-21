@@ -12,30 +12,29 @@ bool NumberDialog::OnOK(){
 	try { 
 		requestNum = GetInt(IDC_EDIT1); 
 	}
-	catch (XCtrl msg) {
+	catch (XCtrl ) {
 		 return false;
 	}
 	return true;
 }
 
 void MainWindow::OnPaint(HDC hdc){
-
 	RECT rc;
 	GetClientRect(*this, &rc);
 	int x = rc.right/(maxNum+1);
 	int y = rc.bottom / (maxNum+1);
+
 	HFONT font = CreateFontIndirect(&lf);
 	HFONT oldFont =(HFONT) SelectObject(hdc, font);
 	SetTextColor(hdc, color);
+
 	MoveToEx(hdc, 0, y, NULL);
 	LineTo(hdc, rc.right, y);
-
 	MoveToEx(hdc, x, 0, NULL);
 	LineTo(hdc, x, rc.bottom);
 
-	std::string s;
-	
 	for (int i = 1; i <= maxNum; i++) {
+		std::string s;
 		s = std::to_string(i);
 		RECT vodoravno = { i*x,0,(i + 1)*x,y };
 		RECT okomito = { 0,i*y,x,(i + 1)*y };
@@ -48,6 +47,7 @@ void MainWindow::OnPaint(HDC hdc){
 			DrawText(hdc, s.c_str(), -1, &kucica, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}	
 	}
+
 	SelectObject(hdc, oldFont);
 	DeleteObject(font);
 }
@@ -64,15 +64,17 @@ void MainWindow::OnCommand(int id){
 			cf.hwndOwner = *this;
 			cf.lpLogFont = &lf;
 			cf.rgbColors = color;
-			ChooseFont(&cf);
-			color = cf.rgbColors;
-			InvalidateRect(*this, NULL, true);
+			if (ChooseFont(&cf)) {
+				color = cf.rgbColors;
+				InvalidateRect(*this, NULL, true);
+			}
 			break;
-		case ID_NUMBER: 
+		case ID_NUMBER:
 			nD.requestNum = maxNum;
-			nD.DoModal(0, *this);
-			maxNum = nD.requestNum;  
-			InvalidateRect(*this, NULL, true);
+			if(nD.DoModal(0, *this)==IDOK){
+				maxNum = nD.requestNum;
+				InvalidateRect(*this, NULL, true);
+			}
 			break;
 		case ID_EXIT: 
 			DestroyWindow(*this); 
