@@ -34,8 +34,7 @@ void MainWindow::OnPaint(HDC hdc){
 	LineTo(hdc, x, rc.bottom);
 
 	for (int i = 1; i <= maxNum; i++) {
-		std::string s;
-		s = std::to_string(i);
+		std::string s = std::to_string(i);
 		RECT vodoravno = { i*x,0,(i + 1)*x,y };
 		RECT okomito = { 0,i*y,x,(i + 1)*y };
 		DrawText(hdc, s.c_str(), -1, &vodoravno, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
@@ -53,7 +52,6 @@ void MainWindow::OnPaint(HDC hdc){
 }
 
 void MainWindow::OnCommand(int id){
-	NumberDialog nD;
 	switch(id){
 		case ID_FONT: 
 			CHOOSEFONT cf;
@@ -69,13 +67,15 @@ void MainWindow::OnCommand(int id){
 				InvalidateRect(*this, NULL, true);
 			}
 			break;
-		case ID_NUMBER:
+		case ID_NUMBER: {
+			NumberDialog nD;
 			nD.requestNum = maxNum;
-			if(nD.DoModal(0, *this)==IDOK){
+			if (nD.DoModal(0, *this) == IDOK) {
 				maxNum = nD.requestNum;
 				InvalidateRect(*this, NULL, true);
 			}
 			break;
+		}
 		case ID_EXIT: 
 			DestroyWindow(*this); 
 			break;
