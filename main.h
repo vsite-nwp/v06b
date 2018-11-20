@@ -8,7 +8,7 @@ protected:
 	bool OnOK();
 
 public:
-	int MaxNumber;
+	int MaxNumber = 10;
 };
  
 class MainWindow : public Window {
@@ -17,7 +17,8 @@ protected:
 	void OnCommand(int id);
 	void OnDestroy();
 
-	int MaxNumber = NULL;
-	HFONT Font = NULL;
-	int FontSize = NULL;
+public:
+	int MaxNumber;
+	LOGFONT Font;
+	MainWindow();
 };
