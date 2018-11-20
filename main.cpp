@@ -22,8 +22,8 @@ void MainWindow::OnPaint(HDC hdc){
 	RECT rect;
 	GetClientRect(*this, &rect);
 	
-	HFONT hf = CreateFontIndirect(&lf);
-	SelectObject(hdc, hf);
+	HFONT font = CreateFontIndirect(&lf);
+	HFONT fontInUse = (HFONT)SelectObject(hdc, font);
 
 	MoveToEx(hdc, 0, rect.bottom/MaxNum, NULL);
 	LineTo(hdc, rect.right, rect.bottom / MaxNum);
@@ -48,24 +48,27 @@ void MainWindow::OnPaint(HDC hdc){
 			DrawText(hdc, buf, -1, &rc, style);
 		}
 	}
-	
+	SelectObject(hdc, fontInUse);
+	DeleteObject(font);
 }
 
 void MainWindow::OnCommand(int id){
 	switch(id){
-		case ID_FONT: 
-			CHOOSEFONT font;
-			ZeroMemory(&font, sizeof font);
-			font.lStructSize = sizeof font;
-			font.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-			font.lpLogFont = &lf;
-			font.hwndOwner = *this;
-			ChooseFont(&font);
+	case ID_FONT: {
+		CHOOSEFONT font;
+		ZeroMemory(&font, sizeof font);
+		font.lStructSize = sizeof font;
+		font.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
+		font.lpLogFont = &lf;
+		font.hwndOwner = *this;
+		ChooseFont(&font);
+		InvalidateRect(*this, NULL, true);
+	}
 			break;
 		case ID_NUMBER: 
 		{
 			NumberDialog ND;
-			ND.num=10;
+			ND.num=MaxNum-1;
 			if (ND.DoModal(0, *this) == IDOK) {
 				MaxNum = ND.num;
 				InvalidateRect(*this, NULL, true);
