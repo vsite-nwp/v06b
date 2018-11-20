@@ -15,7 +15,13 @@ class MainWindow : public Window {
 	LOGFONT lf = { 0 };
 	int MaxNum;
 public:
- MainWindow() : MaxNum(16){}
+ MainWindow() : MaxNum(16)
+ {
+	 strcpy(lf.lfFaceName, "Arial");
+	 HDC h = GetDC(0);
+	 lf.lfHeight = GetDeviceCaps(h, LOGPIXELSX)/4 ;
+	 ReleaseDC(0, h);
+ }
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);
