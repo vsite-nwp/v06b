@@ -54,16 +54,16 @@ void MainWindow::OnPaint(HDC hdc){
 
 void MainWindow::OnCommand(int id){
 	switch(id){
-	case ID_FONT: {
-		CHOOSEFONT font;
-		ZeroMemory(&font, sizeof font);
-		font.lStructSize = sizeof font;
-		font.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
-		font.lpLogFont = &lf;
-		font.hwndOwner = *this;
-		ChooseFont(&font);
-		InvalidateRect(*this, NULL, true);
-	}
+		case ID_FONT: {
+			CHOOSEFONT font;
+			ZeroMemory(&font, sizeof font);
+			font.lStructSize = sizeof font;
+			font.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS ;
+			font.lpLogFont = &lf;
+			font.hwndOwner = *this;
+			if(ChooseFont(&font)==IDOK)
+			InvalidateRect(*this, NULL, true);
+			}
 			break;
 		case ID_NUMBER: 
 		{
