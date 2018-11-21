@@ -19,7 +19,7 @@ public:
  {
 	 strcpy(lf.lfFaceName, "Arial");
 	 HDC h = GetDC(0);
-	 lf.lfHeight = GetDeviceCaps(h, LOGPIXELSX)/4 ;
+	 lf.lfHeight = -12 * GetDeviceCaps(h, LOGPIXELSX)/72 ;
 	 ReleaseDC(0, h);
  }
 protected:
