@@ -11,6 +11,10 @@ bool NumberDialog::OnInitDialog() {
 bool NumberDialog::OnOK() {
 	try {
 		MaxNumber = GetInt(IDC_EDIT1);
+		if (MaxNumber < 0)
+		{
+			return false;
+		}
 	}
 	catch (XCtrl) {
 		return false;
@@ -50,9 +54,9 @@ void MainWindow::OnPaint(HDC hdc) {
 
 			RECT rect;
 			rect.left = i * cellWidth;
-			rect.right = i * cellWidth + cellWidth;
+			rect.right = (i + 1) * cellWidth;
 			rect.top = j * cellHeight;
-			rect.bottom = j * cellHeight + cellHeight;
+			rect.bottom = (j + 1) * cellHeight;
 
 			DrawText(hdc, value.c_str(), value.length(), &rect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}
@@ -78,6 +82,7 @@ void MainWindow::OnCommand(int id) {
 		cf.lStructSize = sizeof cf;
 		cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
 		cf.lpLogFont = &lf;
+		cf.hwndOwner = *this;
 		if (ChooseFont(&cf)) {
 			Font = lf;
 			InvalidateRect(*this, NULL, true);
