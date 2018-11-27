@@ -16,7 +16,7 @@ private:
 	COLORREF color;
 	int max_broj;
 public:
-	MainWindow() : max_broj(15), color(RGB(0, 0, 0)) {
+	MainWindow() : max_broj(15) {
 		ZeroMemory(&lf, sizeof(lf));
 		_tcscpy(lf.lfFaceName, _T("Arial"));
 		HDC hdc = GetDC(0);
@@ -29,14 +29,3 @@ protected:
 	void OnCommand(int id);
 	void OnDestroy();
 };
-
-bool make_font(LOGFONT &lf, COLORREF &color) {
-	CHOOSEFONT cf;
-	ZeroMemory(&cf, sizeof(cf));
-	cf.lStructSize = sizeof(cf);
-	cf.rgbColors = color;
-	cf.lpLogFont = &lf;
-	cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
-	if (ChooseFont(&cf)) { color = cf.rgbColors; return true; }
-	return false;
-}

@@ -5,15 +5,29 @@ int NumberDialog::IDD(){
 	return IDD_NUMBER; 
 }
 bool NumberDialog::OnInitDialog(){
-	SetInt(IDC_EDIT1, uneseni_broj);
+	SetInt(IDC_EDIT1, uneseni_broj+1);
 	return true;
 }
 bool NumberDialog::OnOK(){
 	try{
-		uneseni_broj = GetInt(IDC_EDIT1);
+
+		uneseni_broj = GetInt(IDC_EDIT1);				
 	}catch (XCtrl msg) {
+
 		MessageBox(*this, _T("Uneseni znak nije broj."), NULL, MB_OK); return false; }
+
 	return true;
+}
+
+bool make_font(LOGFONT &lf, COLORREF &color) {
+	CHOOSEFONT cf;
+	ZeroMemory(&cf, sizeof(cf));
+	cf.lStructSize = sizeof(cf);
+	cf.rgbColors = color;
+	cf.lpLogFont = &lf;
+	cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
+	if (ChooseFont(&cf)) { color = cf.rgbColors; return true; }
+	return false;
 }
 
  
@@ -24,8 +38,8 @@ void MainWindow::OnPaint(HDC hdc){
 	HFONT new_font = CreateFontIndirect(&lf);
 	HGDIOBJ old_font = SelectObject(hdc, new_font);
 
-	float dx = client_rect.right / (max_broj + 1);
-	float dy = client_rect.bottom / (max_broj +1);
+	float dx = client_rect.right / (max_broj+1);
+	float dy = client_rect.bottom / (max_broj+1);
 
 	MoveToEx(hdc, 0, dy, NULL);
 	LineTo(hdc, client_rect.right, dy);
@@ -68,9 +82,11 @@ void MainWindow::OnCommand(int id){
 			NumberDialog dlg;
 			dlg.uneseni_broj = max_broj;
 			if (dlg.DoModal(0, *this) == IDOK){
-				max_broj = dlg.uneseni_broj; InvalidateRect(*this, NULL, true);
+				max_broj = dlg.uneseni_broj;
+				InvalidateRect(*this, NULL, true);
 			}
 		}
+			InvalidateRect(*this, NULL, TRUE);
 			break;
 		case ID_EXIT: 
 			DestroyWindow(*this); 
