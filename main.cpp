@@ -10,11 +10,13 @@ bool NumberDialog::OnInitDialog(){
 }
 bool NumberDialog::OnOK(){
 	try{
-		if (GetInt(IDC_EDIT1)<0)
+		uneseni_broj = GetInt(IDC_EDIT1);
+
+		if (uneseni_broj < 0)
 		{
 			MessageBox(*this, _T("Uneseni broj je manji od 0."), NULL, MB_OK); return false;
-		}	
-		uneseni_broj = GetInt(IDC_EDIT1);				
+		}
+
 	}catch (XCtrl msg) {
 
 		MessageBox(*this, _T("Uneseni znak nije broj."), NULL, MB_OK); return false; }
@@ -39,7 +41,7 @@ void MainWindow::OnPaint(HDC hdc){
 	GetClientRect(*this, &client_rect);
 
 	HFONT new_font = CreateFontIndirect(&lf);
-	HGDIOBJ old_font = SelectObject(hdc, new_font);
+	HFONT old_font = (HFONT)SelectObject(hdc, CreateFontIndirect(&lf));
 
 	float dx = (float)client_rect.right / (max_broj+1);
 	float dy = (float)client_rect.bottom / (max_broj+1);
@@ -77,8 +79,13 @@ void MainWindow::OnPaint(HDC hdc){
 	
 void MainWindow::OnCommand(int id){
 	switch(id){
-		case ID_FONT: 
+		case ID_FONT:
+			
 			if (make_font(lf, color)) InvalidateRect(*this, NULL, true);
+			else
+			{
+				
+			}
 			break;
 		case ID_NUMBER:
 		{
@@ -89,7 +96,7 @@ void MainWindow::OnCommand(int id){
 				InvalidateRect(*this, NULL, true);
 			}
 		}
-			InvalidateRect(*this, NULL, TRUE);
+			
 			break;
 		case ID_EXIT: 
 			DestroyWindow(*this); 
