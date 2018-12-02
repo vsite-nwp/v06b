@@ -38,8 +38,8 @@ void MainWindow::OnPaint(HDC hdc){
 	HFONT new_font = CreateFontIndirect(&lf);
 	HGDIOBJ old_font = SelectObject(hdc, new_font);
 
-	float dx = client_rect.right / (max_broj+1);
-	float dy = client_rect.bottom / (max_broj+1);
+	float dx = (float)client_rect.right / (max_broj+1);
+	float dy = (float)client_rect.bottom / (max_broj+1);
 
 	MoveToEx(hdc, 0, dy, NULL);
 	LineTo(hdc, client_rect.right, dy);
