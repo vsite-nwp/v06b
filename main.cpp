@@ -5,7 +5,7 @@ int NumberDialog::IDD(){
 	return IDD_NUMBER; 
 }
 bool NumberDialog::OnInitDialog(){
-	SetInt(IDC_EDIT1, uneseni_broj+1);
+	SetInt(IDC_EDIT1, uneseni_broj);
 	return true;
 }
 bool NumberDialog::OnOK(){
