@@ -10,7 +10,10 @@ bool NumberDialog::OnInitDialog(){
 }
 bool NumberDialog::OnOK(){
 	try{
-
+		if (GetInt(IDC_EDIT1)<0)
+		{
+			MessageBox(*this, _T("Uneseni broj je manji od 0."), NULL, MB_OK); return false;
+		}	
 		uneseni_broj = GetInt(IDC_EDIT1);				
 	}catch (XCtrl msg) {
 
