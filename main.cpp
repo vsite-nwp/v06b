@@ -24,24 +24,11 @@ bool NumberDialog::OnOK(){
 	return true;
 }
 
-bool make_font(LOGFONT &lf, COLORREF &color) {
-	CHOOSEFONT cf;
-	ZeroMemory(&cf, sizeof(cf));
-	cf.lStructSize = sizeof(cf);
-	cf.rgbColors = color;
-	cf.lpLogFont = &lf;
-	cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
-	if (ChooseFont(&cf)) { color = cf.rgbColors; return true; }
-	return false;
-}
-
- 
 void MainWindow::OnPaint(HDC hdc){
 	RECT client_rect;
 	GetClientRect(*this, &client_rect);
 
-	HFONT new_font = CreateFontIndirect(&lf);
-	HFONT old_font = (HFONT)SelectObject(hdc, CreateFontIndirect(&lf));
+	HGDIOBJ old_font = SelectObject(hdc, CreateFontIndirect(&lf));
 
 	float dx = (float)client_rect.right / (max_broj+1);
 	float dy = (float)client_rect.bottom / (max_broj+1);
@@ -72,8 +59,8 @@ void MainWindow::OnPaint(HDC hdc){
 			DrawText(hdc, num, -1, &rect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		}
 	}
-	SelectObject(hdc, old_font);
-	DeleteObject(new_font);
+	
+	DeleteObject(SelectObject(hdc,old_font));
 
 }
 	
@@ -81,11 +68,19 @@ void MainWindow::OnCommand(int id){
 	switch(id){
 		case ID_FONT:
 			
-			if (make_font(lf, color)) InvalidateRect(*this, NULL, true);
-			else
+			LOGFONT Font = lf;
+			CHOOSEFONT cfont;			
+			ZeroMemory(&cfont, sizeof cfont);
+			cfont.lStructSize = sizeof cfont;
+			cfont.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
+			cfont.lpLogFont = &Font;
+			cfont.hwndOwner = *this;
+			if (ChooseFont(&cfont))
 			{
-				
+				lf = Font;
+				InvalidateRect(*this, 0, true);
 			}
+			
 			break;
 		case ID_NUMBER:
 		{
