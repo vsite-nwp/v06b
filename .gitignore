@@ -1,3 +1,6 @@
 ﻿/Debug
 /Release
 *.user
+/.vs/v06b/v15
+/.vs
+/v6b.sln
