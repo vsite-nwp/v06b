@@ -45,7 +45,7 @@ void MainWindow::OnPaint(HDC hdc){
 	LineTo(hdc, sqWidth, rct.bottom);
 
 	const DWORD style = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	TCHAR num[16];
+	std::string num;
 
 	for (int i = 0; i <= maxNumber; i++) {
 
@@ -54,14 +54,14 @@ void MainWindow::OnPaint(HDC hdc){
 			if (i == 0 && j == 0)
 				continue;
 			else if (j == 0)
-				_stprintf(num, _T("%d"), i);
+				num = std::to_string(i);
 			else if (i == 0)
-				_stprintf(num, _T("%d"), j);
+				num = std::to_string(j);
 			else
-				_stprintf(num, _T("%d"), (i*j));
+				num = std::to_string(i*j);
 
 			RECT rctO = { i * sqWidth, j * sqHeight, (i + 1) * sqWidth , (j + 1)*sqHeight };
-			DrawText(hdc, num, -1, &rctO, style);
+			DrawText(hdc, num.c_str(), -1, &rctO, style);
 		}
 	}
 		
@@ -74,11 +74,14 @@ void MainWindow::OnCommand(int id){
 		case ID_FONT: 
 		{
 			CHOOSEFONT cf;
+			LOGFONT tempFont = lfont;
 			ZeroMemory(&cf, sizeof cf);
 			cf.lStructSize = sizeof cf;
-			cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-			cf.lpLogFont = &lfont;
+			cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS ;
+			cf.lpLogFont = &tempFont;
+			cf.hwndOwner = *this;
 			if (ChooseFont(&cf)) {
+				lfont = tempFont;
 				InvalidateRect(*this, NULL, true);
 			}
 			break;
