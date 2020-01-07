@@ -22,7 +22,7 @@ bool NumberDialog::OnOK() {
 MainWindow::MainWindow() : number(6) {
 	lfont = { 0 };
 	HDC hdc = GetDC(0);
-	strcpy(lfont.lfFaceName, "Arial");
+	strcpy_s(lfont.lfFaceName, "Arial");
 	lfont.lfHeight = -20 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
 	ReleaseDC(0, hdc);
 }
@@ -44,7 +44,7 @@ void MainWindow::OnPaint(HDC hdc) {
 	LineTo(hdc, sqWidth, box.bottom);
 
 	const DWORD style = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	TCHAR broj[16];
+	std::string broj;
 
 	for (int i = 0; i <= number; i++) {
 
@@ -53,14 +53,14 @@ void MainWindow::OnPaint(HDC hdc) {
 			if (i == 0 && j == 0)
 				continue;
 			else if (i == 0)
-				_stprintf(broj, _T("%d"), j);
+				broj = std::to_string(j);
 			else if (j == 0)
-				_stprintf(broj, _T("%d"), i);
+				broj = std::to_string(i);
 			else
-				_stprintf(broj, _T("%d"), (i*j));
-
+				broj = std::to_string(i * j);
+			
 			RECT paintBox = { i * sqWidth, j * sqHeight, (i + 1) * sqWidth , (j + 1)*sqHeight };
-			DrawText(hdc, broj, -1, &paintBox, style);
+			DrawText(hdc, broj.c_str(), -1, &paintBox, style);
 		}
 	}
 
@@ -75,8 +75,9 @@ void MainWindow::OnCommand(int id) {
 		CHOOSEFONT cf;
 		ZeroMemory(&cf, sizeof cf);
 		cf.lStructSize = sizeof cf;
-		cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
+		cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
 		cf.lpLogFont = &lfont;
+		cf.hwndOwner = *this;
 		if (ChooseFont(&cf)) {
 			InvalidateRect(*this, NULL, true);
 		}
