@@ -16,7 +16,7 @@ class MainWindow : public Window {
 	COLORREF colorRef;
 	int maxNumber;
 public:
-	MainWindow() : maxNumber(10), colorRef(RGB(0, 0, 0)) {	}
+	MainWindow();
 protected:
 	void OnPaint(HDC hdc);
 	void OnCommand(int id);

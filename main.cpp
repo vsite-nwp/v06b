@@ -1,19 +1,6 @@
 #include "main.h"
 #include "rc.h"
 
-bool GetFont(LOGFONT& lf, COLORREF& col) {
-	CHOOSEFONT cf;
-	ZeroMemory(&cf, sizeof cf);
-	cf.lStructSize = sizeof cf;
-	cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-	cf.lpLogFont = &lf;
-	cf.rgbColors = col;
-	if (ChooseFont(&cf)) {
-		col = cf.rgbColors;
-		return true;
-	}
-	return false;
-}
 
 int NumberDialog::IDD(){
 	return IDD_NUMBER; 
@@ -33,45 +20,70 @@ bool NumberDialog::OnOK(){
 	return true;
 }
 
+MainWindow::MainWindow() :maxNumber(10) {
+	colorRef = RGB(0, 0, 0);
+	ZeroMemory(&logFont, sizeof logFont);
+	_tcscpy(logFont.lfFaceName, _T("Arial"));
+	HDC hdc = GetDC(0);
+	logFont.lfHeight = -10 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
+	ReleaseDC(0, hdc);
+
+}
  
 void MainWindow::OnPaint(HDC hdc){
-	RECT rc; GetClientRect(*this, &rc);
-	MoveToEx(hdc, 0, rc.bottom / maxNumber, NULL);	
-	LineTo(hdc, rc.right, rc.bottom / maxNumber);
+	RECT rct; GetClientRect(*this, &rct);
+	POINT pnt{ rct.right / (maxNumber + 1), rct.bottom / (maxNumber + 1) };
 
-	MoveToEx(hdc, rc.right / maxNumber, 0, NULL);   
-	LineTo(hdc, rc.right / maxNumber, rc.bottom);
+	HFONT currFont = CreateFontIndirect(&logFont);
+	HFONT oldFont = (HFONT)SelectObject(hdc, currFont);
+	MoveToEx(hdc, pnt.x, 0, 0);
+	LineTo(hdc, pnt.x, rct.bottom);
+	MoveToEx(hdc, 0, pnt.y, 0);
+	LineTo(hdc, rct.right, pnt.y);
+	SetTextColor(hdc, colorRef);
 
-	TCHAR s[10];
-	for (int i = 0; i < maxNumber + 1; ++i) {
-		_stprintf(s, _T("%d"), i);
-		RECT r = { 0, i * rc.bottom / maxNumber, rc.right / maxNumber, (i + 1) * rc.bottom / maxNumber };
-		DrawText(hdc, s, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-	}
-	for (int i = 1; i < maxNumber + 1; ++i) {
-		_stprintf(s, _T("%d"), i);
-		RECT r = { i * rc.right / maxNumber, 0 ,(i + 1) * rc.right / maxNumber,rc.bottom / maxNumber };
-		DrawText(hdc, s, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-		for (int j = 1; j < maxNumber + 1; ++j) {
-			_stprintf(s, _T("%d"), i * j);
-			RECT r = { i * rc.right / maxNumber,j * rc.bottom / maxNumber,(i + 1) * rc.right / maxNumber,(j + 1) * rc.bottom / maxNumber };
-			DrawText(hdc, s, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+	for (int cntRow = 1; cntRow <= maxNumber + 1; ++cntRow) {
+		for (int cntClmn = 1; cntClmn <= maxNumber + 1; ++cntClmn) {
+			RECT loopRect{ cntRow * pnt.x, cntClmn * pnt.y, (cntRow + 1) * pnt.x, (cntClmn + 1) * pnt.y };
+			std::string mult = std::to_string(cntRow * cntClmn);
+			DrawText(hdc, mult.c_str(), -1, &loopRect, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}
 	}
+
+	for (int cnt = 1; cnt < maxNumber + 1; ++cnt) {
+		RECT leftHeader{ cnt * pnt.x,0,(cnt + 1) * pnt.x, pnt.y }, topHeader{ 0, cnt * pnt.y,pnt.x, (cnt + 1) * pnt.y };
+		std::string txt = std::to_string(cnt);
+		DrawText(hdc, txt.c_str(), -1, &topHeader, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		DrawText(hdc, txt.c_str(), -1, &leftHeader, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	}
+
+	SelectObject(hdc, oldFont);
+	DeleteObject(currFont);
 }
 
 void MainWindow::OnCommand(int id){
 	switch(id){
 		case ID_FONT: 
-			if (GetFont(logFont, colorRef))
-				InvalidateRect(*this, NULL, true);
+			CHOOSEFONT chf;
+			chf.Flags = CF_SCREENFONTS | CF_EFFECTS | CF_INITTOLOGFONTSTRUCT;
+			ChooseFont(&chf);
+			CHOOSEFONT cf;
+			ZeroMemory(&cf, sizeof cf);
+			cf.lStructSize = sizeof cf;
+			cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
+			cf.hwndOwner = *this;
+			cf.lpLogFont = &logFont;
+			cf.rgbColors = colorRef;
+			ChooseFont(&cf);
+			colorRef = cf.rgbColors;
+			InvalidateRect(*this, 0, TRUE);
 			break;
 		case ID_NUMBER: {
-			NumberDialog dlg;	dlg.number = maxNumber;
-			if (dlg.DoModal(0, *this) == IDOK) {
-				maxNumber = dlg.number;
-				InvalidateRect(*this, NULL, true);
-			}
+			NumberDialog numDlg;
+			numDlg.number = maxNumber;
+			numDlg.DoModal(NULL, *this);
+			maxNumber = numDlg.number;
+			InvalidateRect(*this, 0, TRUE);
 			break;
 		}
 		case ID_EXIT: 
