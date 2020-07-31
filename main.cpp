@@ -65,18 +65,13 @@ void MainWindow::OnCommand(int id){
 	switch(id){
 		case ID_FONT: 
 			CHOOSEFONT chf;
-			chf.Flags = CF_SCREENFONTS | CF_EFFECTS | CF_INITTOLOGFONTSTRUCT;
-			ChooseFont(&chf);
-			CHOOSEFONT cf;
-			ZeroMemory(&cf, sizeof cf);
-			cf.lStructSize = sizeof cf;
-			cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-			cf.hwndOwner = *this;
-			cf.lpLogFont = &logFont;
-			cf.rgbColors = colorRef;
-			ChooseFont(&cf);
-			colorRef = cf.rgbColors;
-			InvalidateRect(*this, 0, TRUE);
+			ZeroMemory(&chf, sizeof chf);
+			chf.lStructSize = sizeof chf;
+			chf.hwndOwner = *this;
+			chf.lpLogFont = &logFont;
+			if (ChooseFont(&chf)) {
+				InvalidateRect(*this, NULL, true);
+			}
 			break;
 		case ID_NUMBER: {
 			NumberDialog numDlg;
@@ -95,7 +90,6 @@ void MainWindow::OnCommand(int id){
 void MainWindow::OnDestroy(){
 	::PostQuitMessage(0);
 }
-
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
