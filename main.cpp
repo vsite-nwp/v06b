@@ -66,6 +66,7 @@ void MainWindow::OnCommand(int id){
 		case ID_FONT: 
 			CHOOSEFONT chf;
 			ZeroMemory(&chf, sizeof chf);
+			chf.Flags = CF_INITTOLOGFONTSTRUCT;
 			chf.lStructSize = sizeof chf;
 			chf.hwndOwner = *this;
 			chf.lpLogFont = &logFont;
