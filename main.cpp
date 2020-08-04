@@ -31,6 +31,7 @@ MainWindow::MainWindow() :maxNumber(10) {
 }
  
 void MainWindow::OnPaint(HDC hdc){
+
 	RECT rct; GetClientRect(*this, &rct);
 	POINT pnt{ rct.right / (maxNumber + 1), rct.bottom / (maxNumber + 1) };
 
@@ -64,22 +65,35 @@ void MainWindow::OnPaint(HDC hdc){
 void MainWindow::OnCommand(int id){
 	switch(id){
 		case ID_FONT: 
-			CHOOSEFONT chf;
-			ZeroMemory(&chf, sizeof chf);
-			chf.Flags = CF_INITTOLOGFONTSTRUCT;
-			chf.lStructSize = sizeof chf;
-			chf.hwndOwner = *this;
-			chf.lpLogFont = &logFont;
-			if (ChooseFont(&chf)) {
+			CHOOSEFONT cf;  
+			static LOGFONT font = logFont;
+			ZeroMemory(&cf, sizeof(cf));
+			cf.Flags = CF_INITTOLOGFONTSTRUCT;
+			cf.lStructSize = sizeof(cf);
+			cf.hwndOwner = *this;
+			cf.lpLogFont = &logFont;
+
+			if (ChooseFont(&cf))
+			{
+				font = logFont;
 				InvalidateRect(*this, NULL, true);
 			}
+			else
+			{
+				logFont = font;
+			}
 			break;
+		
 		case ID_NUMBER: {
 			NumberDialog numDlg;
 			numDlg.number = maxNumber;
-			numDlg.DoModal(NULL, *this);
-			maxNumber = numDlg.number;
-			InvalidateRect(*this, 0, TRUE);
+
+			if (numDlg.DoModal(NULL, *this) == IDOK) 
+			{
+			    maxNumber = numDlg.number;
+			    InvalidateRect(*this, NULL, true);
+			}
+
 			break;
 		}
 		case ID_EXIT: 
