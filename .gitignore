@@ -1,3 +1,11 @@
 ﻿/Debug
 /Release
 *.user
+*.db
+*.db-shm
+*.db-wal
+*.opendb
+*.sqlite
+*.json
+*.suo
+*.ipch

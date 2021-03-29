@@ -1,29 +1,37 @@
 #pragma once
 #include <string>
-class XCtrl {};
 
 typedef std::basic_string<TCHAR> tstring;
+#ifdef UNICODE
+#define to_tstring to_wstring
+#else
+#define to_tstring to_string
+#endif
 
-class Dialog
+namespace vsite::nwp {
+
+class dialog
 {
 	HWND hw;
 public:
-	static int CALLBACK Proc(HWND hw, UINT msg, WPARAM wp, LPARAM lp);
+	static int CALLBACK proc(HWND hw, UINT msg, WPARAM wp, LPARAM lp);
 	operator HWND() const { return hw; }
-	int DoModal(HINSTANCE, HWND parent=0);
+	int do_modal(HINSTANCE, HWND parent = 0);
 protected:
 //	operations
-	void SetInt(int idCtrl, int val);
-	int GetInt(int idCtrl) throw (XCtrl);
-	void SetText(int idCtrl, const tstring& val);
-	tstring GetText(int idCtrl);
-	void SetReal(int idCtrl, double val);
-	double GetReal(int idCtrl);
+	void set_int(int id_ctrl, int val);
+	int get_int(int id_ctrl); // throws std::runtime_error
+	void set_text(int idCtrl, const tstring& val);
+	tstring get_text(int idCtrl);
+	void set_real(int idCtrl, double val); // throws std::runtime_error
+	double get_real(int idCtrl);
 
 //	overridables
-	virtual int IDD() = 0;
-	virtual bool OnInitDialog() { return false; }
-	virtual bool OnCommand(int id, int code) { return false; }
-	virtual bool OnOK() { return true; }
-	virtual void OnCancel() { }
+	virtual int idd() const = 0;
+	virtual bool on_init_dialog() { return false; }
+	virtual bool on_command(int id, int code) { return false; }
+	virtual bool on_ok() { return true; }
+	virtual void on_cancel() { }
 };
+
+} // namespace
