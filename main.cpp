@@ -57,12 +57,15 @@ void main_window::on_paint(HDC hdc) {
 void main_window::on_command(int id) {
 	switch (id) {
 	case ID_FONT:
+		LOGFONT temp = lf;
 		CHOOSEFONT cf;
 		ZeroMemory(&cf, sizeof cf);
 		cf.lStructSize = sizeof cf;
 		cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
-		cf.lpLogFont = &lf;
+		cf.hwndOwner = *this;
+		cf.lpLogFont = &temp;
 		if (ChooseFont(&cf)) {
+			lf = temp;
 			InvalidateRect(*this, NULL, true);
 		}
 		break;
