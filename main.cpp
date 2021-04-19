@@ -1,6 +1,5 @@
 #include "main.h"
 #include "rc.h"
-#include <list>
 
 class multiplication {
 	inline static int numToMultiplyTo = 0;
