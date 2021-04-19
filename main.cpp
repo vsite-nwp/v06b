@@ -33,22 +33,20 @@ void main_window::on_paint(HDC hdc) {
 	LineTo(hdc, width, rect.bottom);
 
 	const DWORD style = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	std::string broj;
+	std::wstring broj;
 
 	for (int i = 0; i <= max_broj; i++) {
 
 		for (int j = 0; j <= max_broj; j++) {
 
 			if (i == 0 || j == 0) {
-				broj = std::to_string(i + j);
+				broj = std::to_wstring(i + j);
 			}
 			else {
-				broj = std::to_string(i * j);
+				broj = std::to_wstring(i * j);
 			}
 			RECT rectO = { i * width, j * height, (i + 1) * width, (j + 1) * height };
-			std::wstring stemp = std::wstring(broj.begin(), broj.end());
-			LPCWSTR sw = stemp.c_str();
-			DrawText(hdc, sw, -1, &rectO, style);
+			DrawText(hdc, broj.c_str(), -1, &rectO, style);
 		}
 	}
 
@@ -65,7 +63,6 @@ void main_window::on_command(int id) {
 		cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
 		cf.lpLogFont = &lf;
 		if (ChooseFont(&cf)) {
-			CreateFontIndirect(&lf);
 			InvalidateRect(*this, NULL, true);
 		}
 		break;
@@ -93,7 +90,7 @@ main_window::main_window() : max_broj(16)
 	lf = { 0 };
 	HDC hdc = GetDC(0);
 	wcscpy(lf.lfFaceName, _T("Arial"));
-	lf.lfHeight = -10 * GetDeviceCaps(hdc, LOGPIXELSY) / 52;
+	lf.lfHeight = -MulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72);
 	ReleaseDC(0, hdc);
 }
 
