@@ -38,7 +38,7 @@ bool number_dialog::on_ok(){
  
 void main_window::on_paint(HDC hdc){
 	
-	font.lfHeight = -12 * (GetDeviceCaps(hdc, LOGPIXELSY) / 72);
+	font.lfHeight = -12 * (GetDeviceCaps(hdc, LOGPIXELSY) / 72); 
 	int limit = this->limit_num + 1;
 
 	RECT window_size;
