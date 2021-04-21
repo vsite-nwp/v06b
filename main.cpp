@@ -37,8 +37,7 @@ bool number_dialog::on_ok(){
 }
  
 void main_window::on_paint(HDC hdc){
-	//If no font is selected use Times New Roman
-	if (font.lfFaceName == NULL) wcsncpy(font.lfFaceName, _T("Times New Roman"), sizeof("Times New Roman"));
+	
 	font.lfHeight = -12 * (GetDeviceCaps(hdc, LOGPIXELSY) / 72);
 	int limit = this->limit_num + 1;
 
