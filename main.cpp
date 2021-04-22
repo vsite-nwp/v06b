@@ -2,32 +2,18 @@
 #include "rc.h"
 
 
-bool choose_font(LOGFONT& log_font_ref, COLORREF& color_ref) {
-	//Prepare font specs for LOGFONT 
-	CHOOSEFONT font_specs;
-	ZeroMemory(&log_font_ref, sizeof(log_font_ref));
-	ZeroMemory(&font_specs, sizeof(font_specs));
-	font_specs.lStructSize = sizeof(font_specs);
-	font_specs.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-	font_specs.lpLogFont = &log_font_ref;
-	font_specs.rgbColors = color_ref;
-
-	if (ChooseFont(&font_specs)) return true;
-	return false;
-}
-
 int number_dialog::idd() const {
 	return IDD_NUMBER; 
 }
 
 bool number_dialog::on_init_dialog() {
-	dialog::set_int(IDC_EDIT1, this->num_to_multiply_to);
+	set_int(IDC_EDIT1, this->num_to_multiply_to);
 	return true;
 }
 
 bool number_dialog::on_ok(){
 	try {
-		num_to_multiply_to = dialog::get_int(IDC_EDIT1);
+		num_to_multiply_to = get_int(IDC_EDIT1);
 	}
 	catch (std::runtime_error) {
 		MessageBox(*this, _T("Error while entering number!"), 0, MB_OK);
@@ -38,7 +24,6 @@ bool number_dialog::on_ok(){
  
 void main_window::on_paint(HDC hdc){
 	
-	font.lfHeight = -12 * (GetDeviceCaps(hdc, LOGPIXELSY) / 72); 
 	int limit = this->limit_num + 1;
 
 	RECT window_size;
@@ -52,46 +37,46 @@ void main_window::on_paint(HDC hdc){
 	MoveToEx(hdc, window_size.right / limit, 0, NULL);
 	LineTo(hdc, window_size.right / limit, window_size.bottom);
 
-
 	HFONT font_handle = CreateFontIndirect(&font);
 	UINT font_styles = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
 	HGDIOBJ font_gdiObject = SelectObject(hdc, font_handle);
 	SetTextColor(hdc, font_color);
 
 	
-	TCHAR num_char[8];
+	std::wstring num_char;
 
 	//Draws numbers to multiply to left and top side of multiplication table
 	for (int j = 1; j < limit; ++j) {
 
-		swprintf_s(num_char, _T("%d"), j);
+		num_char = std::to_wstring(j);
 
 		//Move rectangle in which number is to be written in
 		RECT vertical_num_rect = { 0, j * window_size.bottom / limit, window_size.right / limit, (j + 1) * window_size.bottom / limit };
-		DrawText(hdc, num_char, -1, &vertical_num_rect, font_styles);
+		DrawText(hdc, num_char.c_str(), -1, &vertical_num_rect, font_styles);
 
 		RECT horizontal_num_rect = { j * (window_size.right / limit), 0, (j + 1) * (window_size.right / limit), (window_size.bottom / limit) };
-		DrawText(hdc, num_char, -1, &horizontal_num_rect, font_styles);
+		DrawText(hdc, num_char.c_str(), -1, &horizontal_num_rect, font_styles);
 	}
 
 	//Draws and calculates multiplied numbers
 	for (int j = 1; j < limit; ++j) {
 		for (int k = 1; k < limit; ++k) {
 
-			swprintf_s(num_char, _T("%d"), j * k);
+			num_char = std::to_wstring(j * k);
 
 			//Move rectangle in which number is to be written in
 			RECT multiplied_nums_rect = { j * (window_size.right / limit), k * (window_size.bottom / limit),
 			(j + 1) * (window_size.right / limit), (k + 1) * (window_size.bottom / limit) };
-			DrawText(hdc, num_char, -1, &multiplied_nums_rect, font_styles);
+			DrawText(hdc, num_char.c_str(), -1, &multiplied_nums_rect, font_styles);
 		}
 	}
 
-	DeleteObject(SelectObject(hdc, font_handle));
+	DeleteObject(font_gdiObject);
 }
 
 void main_window::on_command(int id){
 	number_dialog numDlg;
+	numDlg.num_to_multiply_to = limit_num;
 	switch(id){
 		case ID_FONT: 
 			if (choose_font(font, font_color)) {
