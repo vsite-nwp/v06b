@@ -71,6 +71,7 @@ void main_window::on_paint(HDC hdc){
 		}
 	}
 
+	DeleteObject(font_handle);
 	DeleteObject(font_gdiObject);
 }
 
@@ -79,7 +80,7 @@ void main_window::on_command(int id){
 	numDlg.num_to_multiply_to = limit_num;
 	switch(id){
 		case ID_FONT: 
-			if (choose_font(font, font_color)) {
+			if (choose_font()) {
 				InvalidateRect(*this, 0, true);
 			}
 			break;

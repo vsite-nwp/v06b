@@ -16,6 +16,8 @@ public:
 	COLORREF font_color = RGB(0, 0, 0);
 	CHOOSEFONT font_specs;
 	LOGFONT font;
+	LOGFONT font_copy;
+
 	main_window() {
 		HDC device_context = GetDC(0);
 		ZeroMemory(&font, sizeof(font));
@@ -24,18 +26,19 @@ public:
 		ReleaseDC(*this, device_context);
 		ZeroMemory(&font_specs, sizeof(font_specs));
 		font_specs.lStructSize = sizeof(font_specs);
-
+		font_specs.lpLogFont = &font_copy;
 	}
 
-	bool choose_font(LOGFONT& log_font_ref, COLORREF& color_ref) {
+	bool choose_font() {
 		//Prepare font specs for LOGFONT 
 		font_specs.hwndOwner = *this;
 		font_specs.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-		font_specs.lpLogFont = &log_font_ref;
-		font_specs.rgbColors = color_ref;
+		font_specs.rgbColors = font_color;
+		font_specs.lpLogFont = &font_copy;
 
 		if (ChooseFont(&font_specs)) {
-			color_ref = font_specs.rgbColors;
+			font = font_copy;
+			font_color = font_specs.rgbColors;
 			return true;
 		}
 		return false;
