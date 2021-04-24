@@ -26,7 +26,6 @@ public:
 		ReleaseDC(*this, device_context);
 		ZeroMemory(&font_specs, sizeof(font_specs));
 		font_specs.lStructSize = sizeof(font_specs);
-		font_specs.lpLogFont = &font_copy;
 	}
 
 	bool choose_font() {

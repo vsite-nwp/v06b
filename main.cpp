@@ -8,7 +8,7 @@ int number_dialog::idd() const {
 
 bool number_dialog::on_init_dialog() {
 	set_int(IDC_EDIT1, this->num_to_multiply_to);
-	return true;
+	return true; 
 }
 
 bool number_dialog::on_ok(){
