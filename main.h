@@ -14,23 +14,23 @@ class main_window : public vsite::nwp::window {
 public:
 	int limit_num = 1;
 	COLORREF font_color = RGB(0, 0, 0);
-	CHOOSEFONT font_specs;
 	LOGFONT font;
-	LOGFONT font_copy;
 
 	main_window() {
 		HDC device_context = GetDC(0);
 		ZeroMemory(&font, sizeof(font));
 		wcsncpy_s(font.lfFaceName, _T("Times New Roman"), sizeof("Times New Roman"));
-		font.lfHeight = -15 * (GetDeviceCaps(device_context, LOGPIXELSY) / 72);
+		font.lfHeight = -14 * GetDeviceCaps(device_context, LOGPIXELSY) / 72;
 		ReleaseDC(*this, device_context);
-		ZeroMemory(&font_specs, sizeof(font_specs));
-		font_specs.lStructSize = sizeof(font_specs);
-		font_specs.lpLogFont = &font_copy;
 	}
 
 	bool choose_font() {
 		//Prepare font specs for LOGFONT 
+		CHOOSEFONT font_specs;
+		LOGFONT font_copy;
+
+		font_specs.lStructSize = sizeof(font_specs);
+		font_specs.lpLogFont = &font_copy;
 		font_specs.hwndOwner = *this;
 		font_specs.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
 		font_specs.rgbColors = font_color;

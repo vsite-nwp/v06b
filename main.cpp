@@ -72,7 +72,8 @@ void main_window::on_paint(HDC hdc){
 		}
 	}
 
-	DeleteObject(font_gdiObject);
+	SelectObject(hdc, font_gdiObject);
+	DeleteObject(font_handle);
 }
 
 void main_window::on_command(int id){
