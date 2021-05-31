@@ -22,10 +22,11 @@ public:
 		HDC device_context = GetDC(0);
 		ZeroMemory(&font, sizeof(font));
 		wcsncpy_s(font.lfFaceName, _T("Times New Roman"), sizeof("Times New Roman"));
-		font.lfHeight = -12 * (GetDeviceCaps(device_context, LOGPIXELSY) / 72);
+		font.lfHeight = -15 * (GetDeviceCaps(device_context, LOGPIXELSY) / 72);
 		ReleaseDC(*this, device_context);
 		ZeroMemory(&font_specs, sizeof(font_specs));
 		font_specs.lStructSize = sizeof(font_specs);
+		font_specs.lpLogFont = &font_copy;
 	}
 
 	bool choose_font() {
@@ -33,7 +34,7 @@ public:
 		font_specs.hwndOwner = *this;
 		font_specs.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
 		font_specs.rgbColors = font_color;
-		font_specs.lpLogFont = &font_copy;
+		font_copy = font;
 
 		if (ChooseFont(&font_specs)) {
 			font = font_copy;

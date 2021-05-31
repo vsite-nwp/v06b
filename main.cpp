@@ -19,8 +19,9 @@ bool number_dialog::on_ok(){
 		MessageBox(*this, _T("Error while entering number!"), 0, MB_OK);
 		return false;
 	}
-	return true;
+	return true; 
 }
+
  
 void main_window::on_paint(HDC hdc){
 	
@@ -71,7 +72,6 @@ void main_window::on_paint(HDC hdc){
 		}
 	}
 
-	DeleteObject(font_handle);
 	DeleteObject(font_gdiObject);
 }
 
