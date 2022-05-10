@@ -38,27 +38,27 @@ void main_window::on_paint(HDC hdc){
 
 
 	const DWORD style = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	std::string displayNum;
-
+	//std::string displayNum;
+	std::wstring displayNum;
+	//std::to_wstring(j)
 	for (int i = 0; i <= new_num_input; i++) {
 		if (i > 0) {
-			displayNum = std::to_string(i);
+			displayNum = std::to_wstring(i);
 		}
 			
 
 		for (int j = 0; j <= new_num_input; j++) {
 			if (i == 0) {
 				if (j < 1)
-					displayNum = "X";
+					displayNum = 'X';
 				else
-					displayNum = std::to_string(j);
+					displayNum = std::to_wstring(j);
 			}
 			if (i > 0 && j > 0)
-				displayNum = std::to_string(i * j);
+				displayNum = std::to_wstring(i*j);
 
 			RECT numCell = { i * width, j * height, (i + 1) * width, (j + 1) * height };
-			std::wstring displayStr = std::wstring(displayNum.begin(), displayNum.end());
-			LPCWSTR sw = displayStr.c_str();
+			LPCWSTR sw = displayNum.c_str();
 			DrawText(hdc, sw, -1, &numCell, style);
 		}
 
@@ -100,12 +100,12 @@ void main_window::on_destroy(){
 	::PostQuitMessage(0);
 }
 
-main_window::main_window() : new_num_input()
+main_window::main_window() : new_num_input(10)
 {
 	logfont = { 0 };
 	HDC hdc = GetDC(0);
-	wcscpy(logfont.lfFaceName, _T("Garamond"));
-	logfont.lfHeight = -10 * GetDeviceCaps(hdc, LOGPIXELSY) / 42;
+	wcscpy(logfont.lfFaceName, _T("Times New Roman"));
+	logfont.lfHeight = -15 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
 	ReleaseDC(0, hdc);
 }
 

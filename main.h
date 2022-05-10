@@ -12,11 +12,12 @@ protected:
  
 class main_window : public vsite::nwp::window {
 public:
-	int new_num_input;
-	LOGFONT logfont;
 	main_window();
 protected:
 	void on_paint(HDC hdc) override;
 	void on_command(int id) override;
 	void on_destroy() override;
+private:
+	int new_num_input;
+	LOGFONT logfont;
 };
