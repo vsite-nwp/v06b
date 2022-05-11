@@ -38,19 +38,16 @@ void main_window::on_paint(HDC hdc){
 
 
 	const DWORD style = DT_CENTER | DT_VCENTER | DT_SINGLELINE;
-	//std::string displayNum;
 	std::wstring displayNum;
-	//std::to_wstring(j)
 	for (int i = 0; i <= new_num_input; i++) {
 		if (i > 0) {
 			displayNum = std::to_wstring(i);
 		}
 			
-
 		for (int j = 0; j <= new_num_input; j++) {
 			if (i == 0) {
 				if (j < 1)
-					displayNum = 'X';
+					displayNum = L"X";
 				else
 					displayNum = std::to_wstring(j);
 			}
@@ -58,8 +55,7 @@ void main_window::on_paint(HDC hdc){
 				displayNum = std::to_wstring(i*j);
 
 			RECT numCell = { i * width, j * height, (i + 1) * width, (j + 1) * height };
-			LPCWSTR sw = displayNum.c_str();
-			DrawText(hdc, sw, -1, &numCell, style);
+			DrawText(hdc, displayNum.c_str(), -1, &numCell, style);
 		}
 
 	}
@@ -104,7 +100,7 @@ main_window::main_window() : new_num_input(10)
 {
 	logfont = { 0 };
 	HDC hdc = GetDC(0);
-	wcscpy(logfont.lfFaceName, _T("Times New Roman"));
+	wcscpy(logfont.lfFaceName, _T("Arial"));
 	logfont.lfHeight = -15 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
 	ReleaseDC(0, hdc);
 }
