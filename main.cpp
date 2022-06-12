@@ -10,7 +10,12 @@ bool number_dialog::on_init_dialog(){
 	return true;
 }
 bool number_dialog::on_ok(){
+	try{
 	userNum = get_int(IDC_EDIT1);
+	} catch(std::runtime_error e) {
+		MessageBox(*this, _T("Number must be inputed!"), _T("Error"), MB_OK|MB_ICONERROR);
+	}
+
 	return true;
 }
  
@@ -21,14 +26,14 @@ void main_window::on_paint(HDC hdc){
 
 	int width = rectWindow.right / (nums + 1), height = rectWindow.bottom / (nums + 1);
 	HFONT myFont = CreateFontIndirect(&font);
-	HFONT selectedFont = static_cast<HFONT>(SelectObject(hdc, myFont));
+	HFONT oldFont = static_cast<HFONT>(SelectObject(hdc, myFont));
 
 	MoveToEx(hdc, 0, height, 0);
 	LineTo(hdc, rectWindow.right, height);
 	MoveToEx(hdc, width, 0, 0);
 	LineTo(hdc, width, rectWindow.bottom);
+	SetTextColor(hdc, fontColor);
 	for(int count = 1; count < nums + 1; ++count) {
-		//RECT left{height * count, 0, (count + 1)*height, width}, top {0, count * width, height, (count + 1) * width };
 		RECT left{0, height * count, width, (count+1) * height}, top {count * width, 0, (count+1) * width, height};
 		std::wstring text = std::to_wstring(count);
 		DrawText(hdc, text.c_str(), -1, &left, DT_CENTER|DT_SINGLELINE|DT_VCENTER);
@@ -43,8 +48,8 @@ void main_window::on_paint(HDC hdc){
 		}
 	}
 
-	SelectObject(hdc, myFont);
-	DeleteObject(selectedFont);
+	SelectObject(hdc, oldFont);
+	DeleteObject(myFont);
 }
 
 main_window::main_window() {
@@ -67,10 +72,10 @@ void main_window::on_command(int id){
 			chooseFont.lpLogFont = &font;
 			chooseFont.hwndOwner = *this;
 			chooseFont.rgbColors = fontColor;
-			ChooseFont(&chooseFont);
-			fontColor = chooseFont.rgbColors;
-			InvalidateRect(*this, 0, TRUE);
-
+			if(ChooseFont(&chooseFont)){
+				fontColor = chooseFont.rgbColors;
+				InvalidateRect(*this, 0, TRUE);
+			}
 
 			break;
 		case ID_NUMBER: {
