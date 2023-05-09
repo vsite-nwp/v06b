@@ -17,6 +17,7 @@ bool number_dialog::on_ok(){
 	}
 	catch (std::runtime_error e) {
 		MessageBox(*this, _T("You forgot to write number"), _T("Error"), MB_OK | MB_ICONERROR);
+		return false;
 	}
 	return true;
 }
@@ -67,6 +68,7 @@ void main_window::on_command(int id){
 			cf.lpLogFont = &font;
 			cf.hwndOwner = *this;
 			cf.rgbColors = fc;
+			
 			if (ChooseFont(&cf)) {
 				fc = cf.rgbColors;
 				InvalidateRect(*this, 0, TRUE);
