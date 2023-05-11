@@ -62,15 +62,17 @@ void main_window::on_command(int id){
 	switch(id){
 		case ID_FONT:
 			CHOOSEFONT cf;
+			LOGFONT chosenFont = font;
 			ZeroMemory(&cf, sizeof cf);
 			cf.lStructSize = sizeof cf;
 			cf.Flags = CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS | CF_EFFECTS;
-			cf.lpLogFont = &font;
+			cf.lpLogFont = &chosenFont;
 			cf.hwndOwner = *this;
 			cf.rgbColors = fc;
 			
 			if (ChooseFont(&cf)) {
 				fc = cf.rgbColors;
+				font = chosenFont;
 				InvalidateRect(*this, 0, TRUE);
 			}
 
