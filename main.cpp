@@ -8,6 +8,7 @@ bool number_dialog::on_init_dialog(){
 	return true;
 }
 bool number_dialog::on_ok(){
+	inputNum = get_int(IDC_EDIT1);
 	return true;
 }
  
@@ -36,7 +37,11 @@ void main_window::on_command(int id){
 				InvalidateRect(*this, 0, TRUE);
 			}
 			break;
-		case ID_NUMBER: 
+		case ID_NUMBER: {
+			number_dialog nd;
+			nd.do_modal(0, *this);
+			InvalidateRect(*this, 0, TRUE);
+		}
 			break;
 		case ID_EXIT: 
 			::DestroyWindow(*this); 
@@ -54,7 +59,7 @@ main_window::main_window() {
 
 SelObj::SelObj(HDC hdc, HGDIOBJ hObj) : hdc(hdc), hOld(::SelectObject(hdc, hObj)) {}
 
-SelObj::~SelObj() {::SelectObject(hdc, hOld); }  // Destruktor ga vraæa na stari.
+SelObj::~SelObj() {::SelectObject(hdc, hOld); }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {

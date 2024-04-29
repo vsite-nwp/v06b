@@ -2,6 +2,7 @@
 #include "nwpdlg.h"
 
 class number_dialog : public vsite::nwp::dialog {
+	int inputNum;
 protected:
 	int idd() const override;
 	bool on_init_dialog() override;
@@ -18,6 +19,7 @@ protected:
 	void on_destroy() override;
 };
 
+// Selects new, stores old. On destruction selects old, deletes new.
 class SelObj {
 	HDC hdc;
 	HGDIOBJ hOld;
