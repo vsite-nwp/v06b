@@ -9,6 +9,9 @@ protected:
 };
  
 class main_window : public vsite::nwp::window {
+	LOGFONT lf;
+public:
+	main_window();
 protected:
 	void on_paint(HDC hdc) override;
 	void on_command(int id) override;
