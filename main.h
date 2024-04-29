@@ -7,9 +7,12 @@ protected:
 	int idd() const override;
 	bool on_init_dialog() override;
 	bool on_ok() override;
+public:
+	int get_input_num();
 };
  
 class main_window : public vsite::nwp::window {
+	int tableNum;
 	LOGFONT lf;
 public:
 	main_window();

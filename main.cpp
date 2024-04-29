@@ -11,13 +11,50 @@ bool number_dialog::on_ok(){
 	inputNum = get_int(IDC_EDIT1);
 	return true;
 }
+
+int number_dialog::get_input_num() {
+	return inputNum;
+}
  
 void main_window::on_paint(HDC hdc){
 	HFONT hFont = CreateFontIndirect(&lf);
 	SelObj selectedObject(hdc, hFont);
 
-	std::basic_string<TCHAR> s = _T("Tablica množenja");
-	TextOut(hdc, 100, 100, s.c_str(), s.length());
+	RECT rect;  // Left, top, right, bottom.
+	GetClientRect(*this, &rect);
+
+	int width = rect.right / (tableNum + 1);
+	int height = rect.bottom / (tableNum + 1);
+
+	MoveToEx(hdc, 0, height, 0);
+	LineTo(hdc, rect.right, height);
+	MoveToEx(hdc, width, 0, 0);
+	LineTo(hdc, width, rect.bottom);
+
+	tstring number;
+
+	//int n = 1; number = std::to_wstring(n); // zašto mora w ako je tstring?
+
+	// DrawText: style DT_VCENTER does not work without DT_SINGLELINE.
+
+	// First row.
+	for (int i = 1; i <= tableNum; ++i) {
+		number = std::to_wstring(i);
+		RECT current = { width * i, 0, (width * i) + width, height };
+		DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+	}
+
+	// Rest of the table.
+	for (int i = 1; i <= tableNum; ++i) {
+		number = std::to_wstring(i);
+		RECT current = { 0, height * i, width, height * i + height };
+		DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		for (int j = 1; j <= tableNum; ++j) {
+			number = ::std::to_wstring(i * j);
+			RECT current = { width * j, height * i, (width * j) + width, (height * i) + height };
+			DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+		}
+	}
 }
 
 void main_window::on_command(int id){
@@ -40,6 +77,7 @@ void main_window::on_command(int id){
 		case ID_NUMBER: {
 			number_dialog nd;
 			nd.do_modal(0, *this);
+			tableNum = nd.get_input_num();
 			InvalidateRect(*this, 0, TRUE);
 		}
 			break;
@@ -53,8 +91,7 @@ void main_window::on_destroy(){
 	::PostQuitMessage(0);
 }
 
-main_window::main_window() {
-	lf = { 0 };
+main_window::main_window() : lf { 0 }, tableNum { 6 } {
 }
 
 SelObj::SelObj(HDC hdc, HGDIOBJ hObj) : hdc(hdc), hOld(::SelectObject(hdc, hObj)) {}
