@@ -13,17 +13,10 @@ bool number_dialog::on_ok(){
  
 void main_window::on_paint(HDC hdc){
 	HFONT hFont = CreateFontIndirect(&lf);
-	HGDIOBJ hOldFont = SelectObject(hdc, hFont);
+	SelObj selectedObject(hdc, hFont);
 
 	std::basic_string<TCHAR> s = _T("Tablica množenja");
 	TextOut(hdc, 100, 100, s.c_str(), s.length());
-	
-	SelectObject(hdc, hOldFont);
-	DeleteObject(hFont);
-}
-
-main_window::main_window() {
-	lf = { 0 };
 }
 
 void main_window::on_command(int id){
@@ -54,6 +47,14 @@ void main_window::on_command(int id){
 void main_window::on_destroy(){
 	::PostQuitMessage(0);
 }
+
+main_window::main_window() {
+	lf = { 0 };
+}
+
+SelObj::SelObj(HDC hdc, HGDIOBJ hObj) : hdc(hdc), hOld(::SelectObject(hdc, hObj)) {}
+
+SelObj::~SelObj() {::SelectObject(hdc, hOld); }  // Destruktor ga vraæa na stari.
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {

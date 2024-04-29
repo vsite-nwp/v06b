@@ -17,3 +17,11 @@ protected:
 	void on_command(int id) override;
 	void on_destroy() override;
 };
+
+class SelObj {
+	HDC hdc;
+	HGDIOBJ hOld;
+public:
+	SelObj(HDC, HGDIOBJ);
+	~SelObj();
+};
