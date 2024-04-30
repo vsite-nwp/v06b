@@ -22,7 +22,7 @@ protected:
 	void on_destroy() override;
 };
 
-// Selects new, stores old. On destruction selects old, deletes new.
+// Selects new, stores old. On destruction selects old, deselects new.
 class SelObj {
 	HDC hdc;
 	HGDIOBJ hOld;

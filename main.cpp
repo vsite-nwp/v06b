@@ -33,28 +33,28 @@ void main_window::on_paint(HDC hdc){
 
 	tstring number;
 
-	//int n = 1; number = std::to_wstring(n); // zašto mora w ako je tstring?
-
 	// DrawText: style DT_VCENTER does not work without DT_SINGLELINE.
 
 	// First row.
 	for (int i = 1; i <= tableNum; ++i) {
-		number = std::to_wstring(i);
+		number = std::to_tstring(i);
 		RECT current = { width * i, 0, (width * i) + width, height };
 		DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 	}
 
 	// Rest of the table.
 	for (int i = 1; i <= tableNum; ++i) {
-		number = std::to_wstring(i);
+		number = std::to_tstring(i);
 		RECT current = { 0, height * i, width, height * i + height };
 		DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		for (int j = 1; j <= tableNum; ++j) {
-			number = ::std::to_wstring(i * j);
+			number = ::std::to_tstring(i * j);
 			RECT current = { width * j, height * i, (width * j) + width, (height * i) + height };
 			DrawText(hdc, number.c_str(), -1, &current, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}
 	}
+
+	DeleteObject(hFont);
 }
 
 void main_window::on_command(int id){
