@@ -19,6 +19,7 @@ int number_dialog::get_input_num() {
 void main_window::on_paint(HDC hdc){
 	HFONT hFont = CreateFontIndirect(&lf);
 	SelObj selectedObject(hdc, hFont);
+	SetTextColor(hdc, tableColor);
 
 	RECT rect;  // Left, top, right, bottom.
 	GetClientRect(*this, &rect);
@@ -34,7 +35,7 @@ void main_window::on_paint(HDC hdc){
 	tstring number;
 
 	// DrawText: style DT_VCENTER does not work without DT_SINGLELINE.
-
+	
 	// First row.
 	for (int i = 1; i <= tableNum; ++i) {
 		number = std::to_tstring(i);
@@ -60,8 +61,6 @@ void main_window::on_paint(HDC hdc){
 void main_window::on_command(int id){
 	switch(id){
 		case ID_FONT:
-			wcscpy(lf.lfFaceName, _T("Comic Sans MS"));
-
 			CHOOSEFONT cf;
 			ZeroMemory(&cf, sizeof cf);
 			cf.lStructSize = sizeof cf;
@@ -69,16 +68,19 @@ void main_window::on_command(int id){
 				| CF_SCREENFONTS | CF_EFFECTS;
 			cf.lpLogFont = &lf;
 			cf.hwndOwner = *this;
-
-			if (ChooseFont(&cf)) {
+			cf.rgbColors = tableColor;  // Set color to value from main_window constructor.
+			
+			if (ChooseFont(&cf)) {  // If clicked on ok, returns true, CHOOSEFONT filled.
+				tableColor = cf.rgbColors;  // Colors are not stored in LOGFONT!
 				InvalidateRect(*this, 0, TRUE);
 			}
 			break;
 		case ID_NUMBER: {
 			number_dialog nd;
-			nd.do_modal(0, *this);
-			tableNum = nd.get_input_num();
-			InvalidateRect(*this, 0, TRUE);
+			if ((nd.do_modal(0, *this) == IDOK)) {  // do_modal returns DialogBoxParam which returns ID of pressed control. 
+				tableNum = nd.get_input_num();
+				InvalidateRect(*this, 0, TRUE);
+			}
 		}
 			break;
 		case ID_EXIT: 
@@ -91,7 +93,11 @@ void main_window::on_destroy(){
 	::PostQuitMessage(0);
 }
 
-main_window::main_window() : lf { 0 }, tableNum { 6 } {
+main_window::main_window() : lf{ 0 }, tableNum{ 6 }, tableColor{ RGB(0, 0, 0) } {
+	_tcscpy(lf.lfFaceName, _T("Comic Sans MS"));
+	HDC hdc = GetDC(0);
+	lf.lfHeight = -13 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
+	ReleaseDC(*this, hdc);
 }
 
 SelObj::SelObj(HDC hdc, HGDIOBJ hObj) : hdc(hdc), hOld(::SelectObject(hdc, hObj)) {}

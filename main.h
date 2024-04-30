@@ -14,6 +14,7 @@ public:
 class main_window : public vsite::nwp::window {
 	int tableNum;
 	LOGFONT lf;
+	COLORREF tableColor;
 public:
 	main_window();
 protected:
