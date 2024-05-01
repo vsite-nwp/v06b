@@ -9,6 +9,7 @@ protected:
 	bool on_ok() override;
 public:
 	int get_input_num();
+	void set_input_num(int);
 };
  
 class main_window : public vsite::nwp::window {
