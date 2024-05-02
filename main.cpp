@@ -30,7 +30,7 @@ void number_dialog::set_input_num(int number) {
  
 void main_window::on_paint(HDC hdc){
 	HFONT hFont = CreateFontIndirect(&lf);
-	SelObj selectedObject(hdc, hFont);
+	HGDIOBJ hOld = SelectObject(hdc, hFont);
 	SetTextColor(hdc, tableColor);
 
 	RECT rect;  // Left, top, right, bottom.
@@ -39,6 +39,7 @@ void main_window::on_paint(HDC hdc){
 	int width = rect.right / (tableNum + 1);
 	int height = rect.bottom / (tableNum + 1);
 
+	// Horizontal and vertical table lines.
 	MoveToEx(hdc, 0, height, 0);
 	LineTo(hdc, rect.right, height);
 	MoveToEx(hdc, width, 0, 0);
@@ -47,7 +48,7 @@ void main_window::on_paint(HDC hdc){
 	tstring number;
 
 	// DrawText: style DT_VCENTER does not work without DT_SINGLELINE.
-	
+
 	// First row.
 	for (int i = 1; i <= tableNum; ++i) {
 		number = std::to_tstring(i);
@@ -67,6 +68,7 @@ void main_window::on_paint(HDC hdc){
 		}
 	}
 
+	SelectObject(hdc, hOld);
 	DeleteObject(hFont);
 }
 
@@ -111,10 +113,6 @@ main_window::main_window() : lf{ 0 }, tableNum{ 6 }, tableColor{ RGB(0, 0, 0) } 
 	lf.lfHeight = -13 * GetDeviceCaps(hdc, LOGPIXELSY) / 72;
 	ReleaseDC(*this, hdc);
 }
-
-SelObj::SelObj(HDC hdc, HGDIOBJ hObj) : hdc(hdc), hOld(::SelectObject(hdc, hObj)) {}
-
-SelObj::~SelObj() {::SelectObject(hdc, hOld); }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hp, LPSTR cmdLine, int nShow)
 {
