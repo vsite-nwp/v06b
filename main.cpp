@@ -6,12 +6,10 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <format>
 
-tstring to_tstring(int value) 
-{
-    std::wstringstream wss;
-    wss << value;
-    return wss.str();
+tstring to_tstring(int value) {
+    return std::format(_T("{}"), value);
 }
 
 int number_dialog::idd() const
@@ -44,7 +42,7 @@ main_window::main_window()
 
     //Def font
     HDC hdc = GetDC(nullptr);
-    font.lfHeight = -MulDiv(11, GetDeviceCaps(hdc, LOGPIXELSY), 96);
+    font.lfHeight = -MulDiv(11, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     ReleaseDC(nullptr, hdc);
 }
 
@@ -53,22 +51,47 @@ void main_window::on_paint(HDC hdc)
     RECT rect;
     GetClientRect(*this, &rect);
 
-    //Postavljanje velicine brojeva
+    //Velicina polja
+    double width = rect.right / (table_size + 1.0);
+    double height = rect.bottom / (table_size + 1.0);
+
+    //Omjer polje/font
+    int target_text_height = static_cast<int>(height * 0.8);
+
     LOGFONT dynamic_font = font;
+    int font_size = 8;  //minimalna
+    int actual_text_height = 0;
+
     if (!custom_font_size) 
     {
-        int min_dimension = min(rect.right, rect.bottom);
-        int font_size = min_dimension / (table_size + 1) / 2;
 
-        font_size = max(6, min(font_size, 50));
-        dynamic_font.lfHeight = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 96);
+        HFONT hfont = nullptr;
+        for (font_size = 8; font_size <= 50; ++font_size)
+        {
+            dynamic_font.lfHeight = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
+            hfont = CreateFontIndirect(&dynamic_font);
+            HGDIOBJ old_font = SelectObject(hdc, hfont);
+
+            //Velicina fonta
+            RECT text_rect = { 0, 0, 0, 0 };
+            tstring sample_text = _T("ABCD1234");
+            DrawText(hdc, sample_text.c_str(), -1, &text_rect, DT_CALCRECT | DT_SINGLELINE);
+
+            actual_text_height = text_rect.bottom - text_rect.top;
+
+            SelectObject(hdc, old_font);
+            DeleteObject(hfont);
+
+            //Max
+            if (actual_text_height >= target_text_height || font_size == 50)
+                break;
+        }
+
+        dynamic_font.lfHeight = -MulDiv(font_size, GetDeviceCaps(hdc, LOGPIXELSY), 72);
     }
 
     HFONT hfont = CreateFontIndirect(&dynamic_font);
     HGDIOBJ old_font = SelectObject(hdc, hfont);
-
-    int width = rect.right / (table_size + 1);
-    int height = rect.bottom / (table_size + 1);
 
     //Crtanje polja
     HPEN pen = CreatePen(PS_SOLID, 1, RGB(220, 220, 220));
@@ -76,11 +99,11 @@ void main_window::on_paint(HDC hdc)
 
     for (int i = 0; i <= table_size + 1; ++i) 
     {
-        MoveToEx(hdc, i * width, 0, nullptr);
-        LineTo(hdc, i * width, rect.bottom);
+        MoveToEx(hdc, static_cast<int>(i * width), 0, nullptr);
+        LineTo(hdc, static_cast<int>(i * width), rect.bottom);
 
-        MoveToEx(hdc, 0, i * height, nullptr);
-        LineTo(hdc, rect.right, i * height);
+        MoveToEx(hdc, 0, static_cast<int>(i * height), nullptr);
+        LineTo(hdc, rect.right, static_cast<int>(i * height));
     }
 
     //Crtanje brojeva
